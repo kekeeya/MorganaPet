@@ -1,14 +1,14 @@
-# Mona — 桌面上的摩尔加纳
+# MorganaPet
 
 [![Platform](https://img.shields.io/badge/platform-macOS-black)](https://github.com/kekeeya/MorganaPet/releases)
 [![macOS](https://img.shields.io/badge/macOS-26.0%2B-blue)](https://github.com/kekeeya/MorganaPet/releases)
 [![Release](https://img.shields.io/github/v/release/kekeeya/MorganaPet?include_prereleases)](https://github.com/kekeeya/MorganaPet/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Fan Project](https://img.shields.io/badge/fan%20project-non--commercial-ff69b4)](#-版权说明)
+[![Fan Project](https://img.shields.io/badge/fan%20project-non--commercial-ff69b4)](#️-版权说明)
 
 **基于女神异闻录5摩尔加纳形象的Mac桌面宠物。目前可以监控 Claude 和 Codex 的额度，以及电脑运行的基本情况。**
 
-纯 macOS 原生应用，SwiftUI + AppKit，无网络请求，无遥测，无后台服务。
+纯 macOS 原生应用，SwiftUI + AppKit。
 
 <p align="center">
   <img src="docs/Desktop.gif" width="564" alt="摩尔加纳在桌面上走动">
@@ -21,16 +21,16 @@
 - [🚀 安装](#-安装)
   - [系统要求](#系统要求)
   - [安装流程](#安装流程)
-  - [⚠️ 第一次打开被拦下](#-第一次打开被拦下)
+  - [⚠️ 第一次打开被拦下](#️-第一次打开被拦下)
   - [确认启动成功](#确认启动成功)
 - [📊 额度监控](#-额度监控)
   - [隐私声明](#隐私声明)
   - [Codex 用量](#codex-用量)
   - [Claude 订阅额度](#claude-订阅额度)
-- [🖥️ 本机状态](#-本机状态)
-- [🛠️ 关于源码](#-关于源码)
+- [🖥️ 本机状态](#️-本机状态)
+- [🛠️ 关于源码](#️-关于源码)
 - [📝 License](#-license)
-- [⚖️ 版权说明](#-版权说明)
+- [⚖️ 版权说明](#️-版权说明)
 
 
 ## ✨ 功能一览
