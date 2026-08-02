@@ -1,0 +1,9 @@
+{
+  "note" : "整点报时（12:00–14:00）。可用占位符 {hour}。",
+  "lines" : [
+    {
+      "message" : "现在{hour}点了，中午好！",
+      "expression" : "smile"
+    }
+  ]
+}

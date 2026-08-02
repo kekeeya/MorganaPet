@@ -1,0 +1,9 @@
+{
+  "note": "查看本机状态：CPU。占位符 {cpu} {system} {user} {idle}（吃紧）",
+  "lines": [
+    {
+      "message": "CPU用了 {cpu}。\n其中系统 {system}，用户 {user}。",
+      "expression": "angry"
+    }
+  ]
+}

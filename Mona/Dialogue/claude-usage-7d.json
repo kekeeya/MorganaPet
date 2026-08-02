@@ -1,0 +1,9 @@
+{
+  "note" : "查看 Claude 额度：7 天窗口。占位符 {used} {left} {resets}（宽裕）",
+  "lines" : [
+    {
+      "message" : "Claude 这周用了 {used}%，\n{resets}重置。",
+      "expression" : "smile"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "note": "查看本机状态：硬盘。占位符 {storage} {free} {used} {total}（快满）",
+  "lines": [
+    {
+      "message": "硬盘都 {storage} 了，\n只剩 {free}！再不清理吾辈要没地方住了。",
+      "expression": "angry"
+    }
+  ]
+}

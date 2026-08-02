@@ -1,0 +1,21 @@
+{
+  "note" : "00:00、01:00、02:00 的整点催睡觉。已经过零点了，开始来硬的。",
+  "lines" : [
+    {
+      "message" : "已经过零点了！\n快去睡觉！",
+      "expression" : "angry"
+    },
+    {
+      "message" : "喂——！听见没有！\n睡・觉！",
+      "expression" : "angry"
+    },
+    {
+      "message" : "还，还没有睡吗……",
+      "expression" : "sad"
+    },
+    {
+      "message" : "这种时候写的代码，\n明天全都要重写的。",
+      "expression" : "smile"
+    }
+  ]
+}

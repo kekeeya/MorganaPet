@@ -1,0 +1,21 @@
+{
+  "note" : "22:00 和 23:00 的整点催睡觉。还算讲道理的阶段，建议为主。",
+  "lines" : [
+    {
+      "message" : "已经这个点了，\n差不多该睡觉了吧？",
+      "expression" : "regular"
+    },
+    {
+      "message" : "喂，今天已经做得够多了哦。",
+      "expression" : "smile"
+    },
+    {
+      "message" : "再写下去，\n也只是在制造 bug 而已吧？",
+      "expression" : "smile"
+    },
+    {
+      "message" : "熬夜的话，\n明天就没有体力了噢～？",
+      "expression" : "angry"
+    }
+  ]
+}

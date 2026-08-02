@@ -1,0 +1,9 @@
+{
+  "note" : "查看本机状态：网络。占位符 {interface} {ip} {upload} {download}",
+  "lines" : [
+    {
+      "message" : "网络走的是{interface}，\n本机 IP {ip}。\n上行 {upload}，下行 {download}。",
+      "expression" : "smile"
+    }
+  ]
+}

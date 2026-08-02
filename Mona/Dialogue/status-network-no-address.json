@@ -1,0 +1,9 @@
+{
+  "note": "查看本机状态：有接口但拿不到 IPv4 地址。占位符 {interface} {upload} {download}",
+  "lines": [
+    {
+      "message": "网络走的是{interface}，\n但还没拿到 IP。\n上行 {upload}，下行 {download}。",
+      "expression": "regular"
+    }
+  ]
+}

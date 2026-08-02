@@ -1,0 +1,9 @@
+{
+  "note": "查看本机状态：内存。占位符 {memory} {free} {pressure} {app} {wired} {compressed} {total}（正常）",
+  "lines": [
+    {
+      "message": "内存用了 {memory}，\n还有 {free} 空闲。",
+      "expression": "smile"
+    }
+  ]
+}

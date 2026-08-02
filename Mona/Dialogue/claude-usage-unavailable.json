@@ -1,0 +1,9 @@
+{
+  "note" : "查看 Claude 额度：读不到数据（多半是没在 ~/.claude/settings.json 里配 statusLine，或 Claude Code 还没跑过）。无占位符",
+  "lines" : [
+    {
+      "message" : "吾辈看不到 Claude 的额度……\n是不是还没把 statusLine 配好？",
+      "expression" : "shocked"
+    }
+  ]
+}

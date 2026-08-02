@@ -1,0 +1,9 @@
+{
+  "note" : "查看本机状态：电量不足时。占位符同 status-battery",
+  "lines" : [
+    {
+      "message" : "只剩 {battery} 了！\n快去充电，吾辈可不想突然消失。",
+      "expression" : "angry"
+    }
+  ]
+}

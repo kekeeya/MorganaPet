@@ -1,0 +1,9 @@
+{
+  "note" : "查看 Claude 额度：数据已过期时，作为第一页提醒。占位符 {age}",
+  "lines" : [
+    {
+      "message" : "这是 {age}的数字了，\nClaude Code 没在跑，吾辈拿不到新的。",
+      "expression" : "sad"
+    }
+  ]
+}

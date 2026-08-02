@@ -1,0 +1,9 @@
+{
+  "note": "查看 Codex 用量：记录里的重置时间已过，窗口已滚过。占位符 {window}",
+  "lines": [
+    {
+      "message": "{window}的额度早就重置了，\n吾辈手上那个数字已经作废。",
+      "expression": "regular"
+    }
+  ]
+}

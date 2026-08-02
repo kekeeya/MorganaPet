@@ -1,0 +1,33 @@
+{
+  "note" : "03:00 和 04:00 的整点催睡觉。骂也骂过了，这个阶段是无奈和担心。",
+  "lines" : [
+    {
+      "message" : "……你还醒着啊。",
+      "expression" : "shocked"
+    },
+    {
+      "message" : "吾辈已经不想说什么了……",
+      "expression" : "sad"
+    },
+    {
+      "message" : "喂，天都快亮了……快去睡吧",
+      "expression" : "sad"
+    },
+    {
+      "message" : "吾辈……想先睡了。",
+      "expression" : "sad"
+    },
+    {
+      "message" : "至少，\n喝口水再继续吧。",
+      "expression" : "regular"
+    },
+    {
+      "message" : "喵呜……呼噜噜……",
+      "expression" : "sleep"
+    },
+    {
+      "message" : "杏大人……",
+      "expression" : "sleep"
+    }
+  ]
+}

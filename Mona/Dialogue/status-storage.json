@@ -1,0 +1,9 @@
+{
+  "note": "查看本机状态：硬盘。占位符 {storage} {free} {used} {total}（正常）",
+  "lines": [
+    {
+      "message": "硬盘用了 {storage}，\n还剩 {free}。",
+      "expression": "smile"
+    }
+  ]
+}

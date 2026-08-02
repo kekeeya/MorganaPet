@@ -1,0 +1,25 @@
+{
+  "note" : "被连点骚扰时按顺序播的递进，从上往下依次说，靠点击右边对话框翻页。",
+  "lines" : [
+    {
+      "message" : "喵……喵啪啪啪！",
+      "expression" : "shocked"
+    },
+    {
+      "message" : "……",
+      "expression" : "shocked"
+    },
+    {
+      "message" : "……噢咕～！",
+      "expression" : "shocked"
+    },
+    {
+      "message" : "够、够了～～！",
+      "expression" : "angry"
+    },
+    {
+      "message" : "吾辈可不是玩具啊--！",
+      "expression" : "sad"
+    }
+  ]
+}

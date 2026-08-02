@@ -1,0 +1,9 @@
+{
+  "note": "查看 Codex 用量：数据过旧时作为第一页提醒。占位符 {age}",
+  "lines": [
+    {
+      "message": "这是 {age}的记录了。\nCodex 只在你用它的时候才写下额度，吾辈拿不到更新的。",
+      "expression": "sad"
+    }
+  ]
+}

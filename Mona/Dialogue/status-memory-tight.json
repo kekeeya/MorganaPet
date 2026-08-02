@@ -1,0 +1,9 @@
+{
+  "note": "查看本机状态：内存。占位符 {memory} {free} {pressure} {app} {wired} {compressed} {total}（吃紧）",
+  "lines": [
+    {
+      "message": "内存已经 {memory} 了，\n只剩 {free}！关掉几个窗口吧？",
+      "expression": "angry"
+    }
+  ]
+}

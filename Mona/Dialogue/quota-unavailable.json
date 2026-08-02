@@ -1,0 +1,9 @@
+{
+  "note" : "读不到 Codex 用量记录时说的话。",
+  "lines" : [
+    {
+      "message" : "嗯……吾辈没有读取到本周额度记录哦～？",
+      "expression" : "regular"
+    }
+  ]
+}

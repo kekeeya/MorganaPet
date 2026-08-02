@@ -1,0 +1,13 @@
+{
+  "lines" : [
+    {
+      "message" : "别、别摸那里啦！",
+      "expression" : "angry"
+    },
+    {
+      "message" : "喂！那里不行！",
+      "expression" : "angry"
+    }
+  ],
+  "note" : "摸他肚子的时候说的话——猫不喜欢这个。"
+}

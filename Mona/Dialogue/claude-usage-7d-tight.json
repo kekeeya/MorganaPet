@@ -1,0 +1,9 @@
+{
+  "note" : "查看 Claude 额度：7 天窗口。占位符 {used} {left} {resets}（吃紧）",
+  "lines" : [
+    {
+      "message" : "Claude 这周已经 {used}% 了，\n{resets}才重置……省着点用吧。",
+      "expression" : "sad"
+    }
+  ]
+}

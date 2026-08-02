@@ -1,0 +1,17 @@
+{
+  "lines" : [
+    {
+      "message" : "是给吾辈带了金枪鱼吗～？",
+      "expression" : "kirakira"
+    },
+    {
+      "message" : "喵……喵？",
+      "expression" : "smile"
+    },
+    {
+      "message" : "喂，可以干正事了哦？",
+      "expression" : "angry"
+    }
+  ],
+  "note" : "随手戳一下时偶尔说的话，随机挑一句，不会连着说同一句。"
+}

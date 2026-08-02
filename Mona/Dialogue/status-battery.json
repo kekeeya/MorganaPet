@@ -1,0 +1,9 @@
+{
+  "note" : "查看本机状态：电量正常时。占位符 {battery} {source} {health} {cycles} {temperature}",
+  "lines" : [
+    {
+      "message" : "电量还有 {battery}，\n现在是{source}。",
+      "expression" : "smile"
+    }
+  ]
+}

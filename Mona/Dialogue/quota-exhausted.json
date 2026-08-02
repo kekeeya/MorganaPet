@@ -1,0 +1,13 @@
+{
+  "note": "查看 Codex 用量：占位符 {window}（窗口长度，如「本周」「5 小时」）{reset}（用完）",
+  "lines": [
+    {
+      "message": "{window}Codex额度已经用完。\n下次刷新时间是 {reset}。",
+      "expression": "smile"
+    },
+    {
+      "message": "吾辈明白你焦急的心情。\n那么，今天就先睡觉吧。",
+      "expression": "regular"
+    }
+  ]
+}

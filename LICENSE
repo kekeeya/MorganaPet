@@ -1,0 +1,32 @@
+MIT License
+
+Copyright (c) 2026 kekeeya
+
+本许可证适用于本仓库的源代码。摩尔加纳及《女神异闻录 5》（Persona 5）相关的
+美术资源与角色形象权利归 Atlus / Sega 所有，不在本许可证的授权范围内 ——
+本仓库不包含、也不授权任何美术资源。详见 README 的「版权说明」。
+
+This license covers the source code in this repository. Morgana and Persona 5
+artwork and characters are the property of Atlus / Sega and are NOT covered by
+this license — this repository contains no artwork and grants no rights to any.
+See "版权说明" in the README.
+
+---
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
