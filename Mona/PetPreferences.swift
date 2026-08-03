@@ -26,6 +26,19 @@ enum PetPreferences {
     static let codexHomeKey = "MonaCodexHome"
     static let claudeStatusLineKey = "MonaClaudeStatusLine"
 
+    /// How the menu-bar run cycle reads the machine.
+    ///
+    /// Taste, not correctness: whether a busy machine should make him hurry or
+    /// slow to a trudge is a reading of what the icon is *for*.
+    static let statusRunReversedKey = "MonaStatusRunReversed"
+
+    /// Read on every frame rather than cached: the animator is already awake,
+    /// a `UserDefaults.bool` is a dictionary lookup, and this way a flipped
+    /// switch takes effect within one frame without anything to observe.
+    static var statusRunReversed: Bool {
+        UserDefaults.standard.bool(forKey: statusRunReversedKey)
+    }
+
     static var codexHome: String {
         absolutePath(forKey: codexHomeKey)
     }
@@ -64,17 +77,22 @@ enum PetPreferences {
             && expanded != "/"
     }
 
-    /// All three start on, so a fresh install shows everything and you turn off
-    /// what does not apply to you. Registered rather than left to
+    /// All three lookups start on, so a fresh install shows everything and you
+    /// turn off what does not apply to you. Registered rather than left to
     /// `UserDefaults.bool`, which reports an unset key as `false` — the opposite
     /// of what an absent preference should mean here.
+    ///
+    /// The run-cycle switch is the other way round: `false` is the shipped
+    /// behaviour, so an unset key already means the right thing and it is
+    /// registered only to keep the list of what exists in one place.
     static func registerDefaults() {
         UserDefaults.standard.register(defaults: [
             showsCodexUsageKey: true,
             showsClaudeUsageKey: true,
             showsMachineStatusKey: true,
             codexHomeKey: "",
-            claudeStatusLineKey: ""
+            claudeStatusLineKey: "",
+            statusRunReversedKey: false
         ])
     }
 }

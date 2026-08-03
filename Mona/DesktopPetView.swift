@@ -587,7 +587,7 @@ struct DesktopPetView: View {
     /// The one thing he says without being asked. Every guard lives in
     /// `PetNightWatch`; this only supplies the readings and speaks the result.
     private func considerSpeakingUp(at now: Date) {
-        guard touch.isPetVisible, !PetQuietHours.isQuiet(at: now) else { return }
+        guard touch.isPetVisible, !PetQuietHours.isDisabled else { return }
 
         let sinceSpontaneous = lastSpontaneousAt.map { now.timeIntervalSince($0) } ?? .infinity
         let sinceInteraction = now.timeIntervalSince(lastInteraction)

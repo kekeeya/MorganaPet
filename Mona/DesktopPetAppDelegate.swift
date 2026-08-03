@@ -11,12 +11,12 @@ import SwiftUI
 final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
     private var window: NSWindow?
     private var statusItem: NSStatusItem?
+    private var statusAnimator: StatusBarRunAnimator?
     private var hostingView: PetHostingView<DesktopPetView>?
     private var globalMouseMonitor: Any?
     private var lastEvaluatedScreenPoint: NSPoint?
     private var strokes = PetStrokeRecognizer()
     private var strokeSettleSequence = 0
-    private var spontaneousMenuItem: NSMenuItem?
     private var isShowingPetCursor = false
     private let regions = PetInteractionRegions()
     private let touch = PetTouchState()
@@ -53,6 +53,8 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        statusAnimator?.stop()
+        machine.stop()
         if let globalMouseMonitor {
             NSEvent.removeMonitor(globalMouseMonitor)
         }
@@ -122,12 +124,19 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
         let item = NSStatusBar.system.statusItem(
             withLength: NSStatusItem.variableLength
         )
-        if let image = NSImage(named: "MonaStatusIcon") {
-            image.isTemplate = true
-            image.size = NSSize(width: 20, height: 20)
-            item.button?.image = image
-            item.button?.imageScaling = .scaleProportionallyDown
-            item.button?.setAccessibilityLabel("Mona")
+        if let button = item.button {
+            button.imageScaling = .scaleProportionallyDown
+            button.setAccessibilityLabel("Mona：奔跑速度随 CPU 使用率变化")
+
+            let animator = StatusBarRunAnimator(button: button, machine: machine)
+            animator.start()
+            statusAnimator = animator
+
+            if button.image == nil, let fallback = NSImage(named: "MonaStatusIcon") {
+                fallback.isTemplate = true
+                fallback.size = NSSize(width: 20, height: 20)
+                button.image = fallback
+            }
         }
         item.button?.imagePosition = .imageOnly
 
@@ -141,26 +150,11 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
         )
         menu.addItem(
             NSMenuItem(
-                title: "安静一小时",
-                action: #selector(muteForAnHour),
-                keyEquivalent: ""
-            )
-        )
-        menu.addItem(
-            NSMenuItem(
                 title: "设置…",
                 action: #selector(openSettings),
                 keyEquivalent: ","
             )
         )
-        let neverSpeak = NSMenuItem(
-            title: "不主动说话",
-            action: #selector(toggleSpontaneous),
-            keyEquivalent: ""
-        )
-        neverSpeak.state = PetQuietHours.isDisabled ? .on : .off
-        menu.addItem(neverSpeak)
-        spontaneousMenuItem = neverSpeak
 
         menu.addItem(NSMenuItem.separator())
         menu.addItem(
@@ -173,15 +167,6 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
         item.menu = menu
 
         statusItem = item
-    }
-
-    @objc private func muteForAnHour() {
-        PetQuietHours.mute(for: 3600)
-    }
-
-    @objc private func toggleSpontaneous() {
-        PetQuietHours.isDisabled.toggle()
-        spontaneousMenuItem?.state = PetQuietHours.isDisabled ? .on : .off
     }
 
     /// The two monitors are complementary. While the window accepts clicks its

@@ -4,14 +4,117 @@
 //
 
 import AppKit
+import ServiceManagement
 import SwiftUI
 
-/// The settings window: which lookups appear when you right-click him, and where
-/// the two of them read from.
+/// The settings window.
+///
+/// Split where the two halves stop having anything to do with each other: the
+/// menu-bar icon is a thing you glance at while working, and Mona himself is a
+/// thing that lives on your desktop and talks to you. Nothing on one tab changes
+/// anything on the other.
+struct PetSettingsView: View {
+    var body: some View {
+        TabView {
+            GeneralSettingsView()
+                .tabItem { Label("通用", systemImage: "gearshape") }
+            PetBehaviourSettingsView()
+                .tabItem { Label("桌宠", systemImage: "pawprint") }
+        }
+        .frame(width: 460)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+/// The menu-bar icon, and whether Mona comes back by itself.
+///
+/// The run direction is pure taste, so it says what it does and leaves it at
+/// that. The login item is the one switch in the app that can be refused by
+/// something outside it, which is why it has so much more to say underneath.
+private struct GeneralSettingsView: View {
+    @AppStorage(PetPreferences.statusRunReversedKey) private var runReversed = false
+
+    /// Read from the system on open rather than stored, because it can change
+    /// without us — see `LaunchAtLogin`.
+    @State private var loginStatus = LaunchAtLogin.status
+    @State private var loginFailure: String?
+
+    var body: some View {
+        Form {
+            Section("状态栏奔跑动画") {
+                VStack(alignment: .leading, spacing: 4) {
+                    Toggle("反转奔跑", isOn: $runReversed)
+                    Text("默认是电脑越忙他跑得越快。反转之后正相反——闲下来撒欢，"
+                         + "忙起来踱步。两种走法在 50% 占用处速度相同。")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.vertical, 2)
+            }
+
+            Section("启动") {
+                VStack(alignment: .leading, spacing: 6) {
+                    Toggle("开机时自动启动 Mona", isOn: launchAtLogin)
+
+                    // Only `.requiresApproval` gets said out loud. The other two
+                    // off states are both just "not a login item" — `.notFound`
+                    // means the system has no record of this bundle at all,
+                    // which is simply what never having registered looks like,
+                    // and warning about it told people something was wrong when
+                    // nothing was.
+                    if loginStatus == .requiresApproval {
+                        Label("系统那边还要放行一次——在「登录项与扩展」里把 Mona 打开。",
+                              systemImage: "exclamationmark.triangle")
+                            .font(.caption)
+                            .foregroundStyle(Color.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Button("打开登录项设置") { LaunchAtLogin.openLoginItemsSettings() }
+                    }
+
+                    // A real failure, on the other hand, is worth every word:
+                    // this is the only place the reason ever appears.
+                    if let loginFailure {
+                        Label(loginFailure, systemImage: "xmark.circle")
+                            .font(.caption)
+                            .foregroundStyle(Color.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(.vertical, 2)
+            }
+        }
+        .formStyle(.grouped)
+        // The pane can be changed from System Settings while this window is only
+        // hidden, so the status is re-read rather than trusted from last time.
+        .onAppear { loginStatus = LaunchAtLogin.status }
+    }
+
+    private var launchAtLogin: Binding<Bool> {
+        Binding(
+            get: { loginStatus == .enabled },
+            set: { wanted in
+                do {
+                    try LaunchAtLogin.set(wanted)
+                    loginFailure = nil
+                } catch {
+                    loginFailure = error.localizedDescription
+                }
+                // Read back rather than assumed: asking for it is not the same
+                // as getting it, and `.requiresApproval` is exactly that gap.
+                loginStatus = LaunchAtLogin.status
+            }
+        )
+    }
+}
+
+/// What he does on the desktop: whether he speaks up on his own, which lookups
+/// appear when you right-click him, and where the two of them read from.
 ///
 /// `@AppStorage` rather than a store object, so a change here rewrites the
 /// context menu without anything having to notice and forward it.
-struct PetSettingsView: View {
+private struct PetBehaviourSettingsView: View {
+    @AppStorage(PetQuietHours.disabledKey) private var neverSpeaksFirst = false
     @AppStorage(PetPreferences.showsCodexUsageKey) private var showsCodexUsage = true
     @AppStorage(PetPreferences.showsClaudeUsageKey) private var showsClaudeUsage = true
     @AppStorage(PetPreferences.showsMachineStatusKey) private var showsMachineStatus = true
@@ -27,6 +130,10 @@ struct PetSettingsView: View {
 
     var body: some View {
         Form {
+            Section("对话") {
+                Toggle("从不主动说话", isOn: $neverSpeaksFirst)
+            }
+
             Section("右键菜单") {
                 Toggle("查看 Codex 用量", isOn: $showsCodexUsage)
                 Toggle("查看 Claude 额度", isOn: $showsClaudeUsage)
@@ -71,8 +178,6 @@ struct PetSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 460)
-        .fixedSize(horizontal: false, vertical: true)
         .onAppear(perform: refresh)
         .onChange(of: codexHome) { refresh() }
         .onChange(of: claudeStatusLine) { refresh() }

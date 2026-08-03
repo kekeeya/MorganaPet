@@ -162,13 +162,14 @@ struct PetNightWatch {
     }
 }
 
-/// Whether he is allowed to speak up on his own, and until when he is not.
+/// Whether he is allowed to speak up on his own.
 ///
-/// Anything that interrupts needs an obvious way to stop it, so this lives in
-/// the menu rather than in a file.
+/// Anything that interrupts needs an obvious way to stop it, so the switch is a
+/// checkbox in the settings window rather than something buried in a file.
 enum PetQuietHours {
-    private static let mutedUntilKey = "MonaSpontaneousMutedUntil"
-    private static let disabledKey = "MonaSpontaneousDisabled"
+    /// Not private: the settings window binds to it directly, so the checkbox
+    /// and this are one value rather than two copies to keep in step.
+    static let disabledKey = "MonaSpontaneousDisabled"
     private static let nightSlotKey = "MonaNightSpokenSlot"
     private static let lastSpontaneousKey = "MonaLastSpontaneousAt"
     private static let chimedHourKey = "MonaLastChimedHour"
@@ -176,11 +177,6 @@ enum PetQuietHours {
     static var isDisabled: Bool {
         get { UserDefaults.standard.bool(forKey: disabledKey) }
         set { UserDefaults.standard.set(newValue, forKey: disabledKey) }
-    }
-
-    static var mutedUntil: Date? {
-        get { UserDefaults.standard.object(forKey: mutedUntilKey) as? Date }
-        set { UserDefaults.standard.set(newValue, forKey: mutedUntilKey) }
     }
 
     /// Remembered so a relaunch does not re-roll a slot already used.
@@ -201,13 +197,4 @@ enum PetQuietHours {
         set { UserDefaults.standard.set(newValue, forKey: chimedHourKey) }
     }
 
-    static func isQuiet(at time: Date) -> Bool {
-        if isDisabled { return true }
-        guard let mutedUntil else { return false }
-        return time < mutedUntil
-    }
-
-    static func mute(for duration: TimeInterval, from time: Date = Date()) {
-        mutedUntil = time.addingTimeInterval(duration)
-    }
 }
