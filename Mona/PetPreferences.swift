@@ -26,6 +26,56 @@ enum PetPreferences {
     static let codexHomeKey = "MonaCodexHome"
     static let claudeStatusLineKey = "MonaClaudeStatusLine"
 
+    /// Mona himself on the desktop.
+    ///
+    /// Off until you turn it on, and remembered after that. He is a window that
+    /// sits over your work, which is not something to hand someone on first
+    /// launch without asking.
+    static let petVisibleKey = "MonaPetVisible"
+
+    static var petVisible: Bool {
+        UserDefaults.standard.bool(forKey: petVisibleKey)
+    }
+
+    /// Posted when the pet's visibility is changed from the settings window.
+    static let petSettingsChanged = Notification.Name("MonaPetSettingsChanged")
+
+    /// The desktop calendar sticker.
+    ///
+    /// Its visibility is remembered rather than defaulted on: it is a second
+    /// window on your desktop, and a thing that reappears every launch after you
+    /// closed it is a thing you have to close every launch.
+    static let calendarVisibleKey = "MonaCalendarVisible"
+    static let calendarWidthKey = "MonaCalendarWidth"
+    /// Whether the sticker floats above everything.
+    ///
+    /// On by default — it is a thing you glance at, and one you have to go
+    /// digging for is not worth having. Off drops it to an ordinary window
+    /// level, so clicking into your work puts it behind, and it stops competing
+    /// for attention with whatever you are actually doing.
+    static let calendarAlwaysOnTopKey = "MonaCalendarAlwaysOnTop"
+
+    static var calendarAlwaysOnTop: Bool {
+        UserDefaults.standard.bool(forKey: calendarAlwaysOnTopKey)
+    }
+    static let calendarOriginKey = "MonaCalendarOrigin"
+    /// Last known condition, so a launch with no network still draws something
+    /// truer than a hardcoded default.
+    static let calendarWeatherKey = "MonaCalendarWeather"
+    /// Which city's weather to show — a `CalendarCity.id`, or `"current"` for
+    /// "wherever this machine is". It defaults to a city rather than to the
+    /// machine on purpose: `"current"` is the only value that makes the app ask
+    /// for location, so nobody is prompted who did not go and choose it.
+    static let calendarCityKey = "MonaCalendarCity"
+
+    static var calendarVisible: Bool {
+        UserDefaults.standard.bool(forKey: calendarVisibleKey)
+    }
+
+    /// Posted when a calendar setting changes, so the sticker re-renders without
+    /// the settings window needing a reference to it.
+    static let calendarSettingsChanged = Notification.Name("MonaCalendarSettingsChanged")
+
     /// How the menu-bar run cycle reads the machine.
     ///
     /// Taste, not correctness: whether a busy machine should make him hurry or
@@ -92,7 +142,12 @@ enum PetPreferences {
             showsMachineStatusKey: true,
             codexHomeKey: "",
             claudeStatusLineKey: "",
-            statusRunReversedKey: false
+            statusRunReversedKey: false,
+            petVisibleKey: false,
+            calendarVisibleKey: false,
+            calendarWidthKey: 320.0,
+            calendarAlwaysOnTopKey: true,
+            calendarCityKey: CalendarCity.defaultID
         ])
     }
 }

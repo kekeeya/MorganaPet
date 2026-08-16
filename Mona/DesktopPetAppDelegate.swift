@@ -22,6 +22,7 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
     private let touch = PetTouchState()
     private let machine = MachineStatusMonitor()
     private var settingsWindow: NSWindow?
+    private let calendar = CalendarHUDController()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         PetPreferences.registerDefaults()
@@ -34,6 +35,23 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
         createPetWindow()
         createStatusItem()
         startMouseTracking()
+        // Restored rather than defaulted: the calendar is a second window on the
+        // desktop, so it comes back only if you left it up.
+        if PetPreferences.calendarVisible {
+            calendar.show()
+        }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(calendarSettingsChanged),
+            name: PetPreferences.calendarSettingsChanged,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(petSettingsChanged),
+            name: PetPreferences.petSettingsChanged,
+            object: nil
+        )
 
         for name in [
             NSApplication.didBecomeActiveNotification,
@@ -116,8 +134,10 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
             object: window
         )
 
-        window.makeKeyAndOrderFront(nil)
-        refreshMousePassthrough(force: true)
+        // Off unless you have turned him on before. He is a window sitting over
+        // your work, so a fresh install should not hand him to you unasked —
+        // and once you have chosen, that choice is what is restored.
+        applyPetVisibility(PetPreferences.petVisible)
     }
 
     private func createStatusItem() {
@@ -145,6 +165,13 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
             NSMenuItem(
                 title: "显示/隐藏桌宠",
                 action: #selector(togglePetVisibility),
+                keyEquivalent: ""
+            )
+        )
+        menu.addItem(
+            NSMenuItem(
+                title: "显示/隐藏日历",
+                action: #selector(toggleCalendarVisibility),
                 keyEquivalent: ""
             )
         )
@@ -325,18 +352,31 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func togglePetVisibility() {
         guard let window else { return }
-        if window.isVisible {
+        applyPetVisibility(!window.isVisible)
+    }
+
+    /// Follows the settings window, which only ever writes the preference.
+    @objc private func petSettingsChanged() {
+        applyPetVisibility(PetPreferences.petVisible)
+    }
+
+    /// The one place the pet window is shown or hidden, so the menu item, the
+    /// settings toggle and the restored preference cannot disagree.
+    private func applyPetVisibility(_ wanted: Bool) {
+        guard let window else { return }
+        if wanted {
+            window.makeKeyAndOrderFront(nil)
+            refreshMousePassthrough(force: true)
+        } else {
             window.orderOut(nil)
             window.ignoresMouseEvents = true
             lastEvaluatedScreenPoint = nil
             endStroke()
             // Nothing left under the cursor to justify the hand.
             showPetCursor(false)
-        } else {
-            window.makeKeyAndOrderFront(nil)
-            refreshMousePassthrough(force: true)
         }
         touch.isPetVisible = window.isVisible
+        UserDefaults.standard.set(window.isVisible, forKey: PetPreferences.petVisibleKey)
     }
 
     /// Brings up the settings window, building it the first time.
@@ -345,6 +385,14 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
     /// means sending `showSettingsWindow:` into the responder chain, and an
     /// accessory app with no menu bar and no key window may have nobody in that
     /// chain to answer it. A window we hold ourselves cannot fail quietly.
+    @objc private func toggleCalendarVisibility() {
+        calendar.toggle()
+    }
+
+    @objc private func calendarSettingsChanged() {
+        calendar.settingsChanged()
+    }
+
     @objc func openSettings() {
         let window = settingsWindow ?? makeSettingsWindow()
         settingsWindow = window

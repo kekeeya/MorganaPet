@@ -20,9 +20,68 @@ struct PetSettingsView: View {
                 .tabItem { Label("通用", systemImage: "gearshape") }
             PetBehaviourSettingsView()
                 .tabItem { Label("桌宠", systemImage: "pawprint") }
+            CalendarSettingsView()
+                .tabItem { Label("日历", systemImage: "calendar") }
         }
         .frame(width: 460)
         .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+/// The desktop calendar sticker.
+///
+/// Size and position are the only things worth adjusting — the design itself is
+/// fixed artwork. The coordinate field is an escape hatch rather than the normal
+/// path: left empty, the weather follows the system location, and failing that
+/// the IP address.
+private struct CalendarSettingsView: View {
+    @AppStorage(PetPreferences.calendarVisibleKey) private var visible = false
+    @AppStorage(PetPreferences.calendarWidthKey) private var width = 320.0
+    @AppStorage(PetPreferences.calendarAlwaysOnTopKey) private var alwaysOnTop = true
+    @AppStorage(PetPreferences.calendarCityKey) private var city = CalendarCity.defaultID
+
+    var body: some View {
+        Form {
+            Section("显示") {
+                Toggle("在桌面显示日历", isOn: $visible)
+                Toggle("永远置顶", isOn: $alwaysOnTop)
+            }
+
+            Section {
+                Slider(value: $width, in: 200...760, step: 20) {
+                    Text("日历大小")
+                } minimumValueLabel: {
+                    Text("小").font(.caption)
+                } maximumValueLabel: {
+                    Text("大").font(.caption)
+                }
+            }
+
+            Section("天气") {
+                VStack(alignment: .leading, spacing: 6) {
+                    CalendarCityPicker(raw: $city)
+                    Text("根据选择城市从 Open-Meteo 获取，每半小时刷新一次。")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    // GeoNames ships under CC BY 4.0, which asks for this.
+                    Text("城市数据 © GeoNames，CC BY 4.0")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(.vertical, 2)
+            }
+        }
+        .formStyle(.grouped)
+        .onChange(of: width) { _, _ in notifyChanged() }
+        .onChange(of: visible) { _, _ in notifyChanged() }
+        .onChange(of: alwaysOnTop) { _, _ in notifyChanged() }
+        .onChange(of: city) { _, _ in notifyChanged() }
+    }
+
+    private func notifyChanged() {
+        NotificationCenter.default.post(name: PetPreferences.calendarSettingsChanged,
+                                        object: nil)
     }
 }
 
@@ -42,15 +101,7 @@ private struct GeneralSettingsView: View {
     var body: some View {
         Form {
             Section("状态栏奔跑动画") {
-                VStack(alignment: .leading, spacing: 4) {
-                    Toggle("反转奔跑", isOn: $runReversed)
-                    Text("默认是电脑越忙他跑得越快。反转之后正相反——闲下来撒欢，"
-                         + "忙起来踱步。两种走法在 50% 占用处速度相同。")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(.vertical, 2)
+                Toggle("反转奔跑", isOn: $runReversed)
             }
 
             Section("启动") {
@@ -114,6 +165,7 @@ private struct GeneralSettingsView: View {
 /// `@AppStorage` rather than a store object, so a change here rewrites the
 /// context menu without anything having to notice and forward it.
 private struct PetBehaviourSettingsView: View {
+    @AppStorage(PetPreferences.petVisibleKey) private var visible = false
     @AppStorage(PetQuietHours.disabledKey) private var neverSpeaksFirst = false
     @AppStorage(PetPreferences.showsCodexUsageKey) private var showsCodexUsage = true
     @AppStorage(PetPreferences.showsClaudeUsageKey) private var showsClaudeUsage = true
@@ -130,6 +182,10 @@ private struct PetBehaviourSettingsView: View {
 
     var body: some View {
         Form {
+            Section("显示") {
+                Toggle("在桌面显示桌宠", isOn: $visible)
+            }
+
             Section("对话") {
                 Toggle("从不主动说话", isOn: $neverSpeaksFirst)
             }
@@ -183,6 +239,12 @@ private struct PetBehaviourSettingsView: View {
         .onChange(of: claudeStatusLine) { refresh() }
         .onChange(of: showsCodexUsage) { refresh() }
         .onChange(of: showsClaudeUsage) { refresh() }
+        // The window it shows lives in the app delegate, so the change is
+        // announced rather than applied — same arrangement as the calendar's.
+        .onChange(of: visible) { _, _ in
+            NotificationCenter.default.post(name: PetPreferences.petSettingsChanged,
+                                            object: nil)
+        }
     }
 
     private func refresh() {
