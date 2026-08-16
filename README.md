@@ -10,10 +10,9 @@
 
 
 <p align="center">
-  <img src="docs/running.gif" width="200" alt="摩尔加纳在菜单栏里奔跑">
-</p>
-<p align="center">
-  <img src="docs/Desktop.gif" width="500" alt="摩尔加纳在桌面上走动">
+  <img src="docs/calendar.gif" height="150" alt="桌面日历">
+  <img src="docs/running.gif" height="150" alt="菜单栏">
+  <img src="docs/Desktop.gif" height="150" alt="桌面宠物">
 </p>
 
 
