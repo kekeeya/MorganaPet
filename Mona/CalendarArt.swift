@@ -3,8 +3,9 @@
 //  Mona
 //
 
-import AppKit
+import CoreGraphics
 import Foundation
+import ImageIO
 
 /// Where every calendar piece goes — looked up, not computed.
 ///
@@ -95,7 +96,7 @@ final class CalendarArt {
     /// Set before first use; the pack is read once.
     nonisolated(unsafe) static var resourceDirectory: String?
 
-    static let shared = CalendarArt()
+    nonisolated(unsafe) static let shared = CalendarArt()
 
     private var images: [String: CGImage] = [:]
     private var missing: Set<String> = []
@@ -108,7 +109,11 @@ final class CalendarArt {
             let u = URL(fileURLWithPath: dir).appendingPathComponent("\(name).\(ext)")
             return FileManager.default.fileExists(atPath: u.path) ? u : nil
         }
-        return Bundle.main.url(forResource: name, withExtension: ext)
+        if let url = Bundle.main.url(forResource: name, withExtension: ext) {
+            return url
+        }
+        return Bundle.main.url(forResource: name, withExtension: ext,
+                               subdirectory: "CalendarResources")
     }
 
     /// Nil when the art pack is missing, which is the one failure the HUD cannot

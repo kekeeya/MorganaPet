@@ -3,8 +3,11 @@
 //  Mona
 //
 
-import AppKit
 import CoreGraphics
+import Foundation
+#if !WIDGET_EXTENSION
+import AppKit
+#endif
 
 /// What the HUD is showing.
 struct CalendarHUDContent: Equatable {
@@ -43,15 +46,28 @@ struct CalendarHUDContent: Equatable {
 /// `cal-layout.json`, which the offline renderer's export step writes. See
 /// `CalendarLayout` for why.
 enum CalendarHUDRenderer {
+    private struct RenderedFrame {
+        let image: CGImage
+        let pointSize: CGSize
+    }
 
     static var aspect: CGFloat { CalendarArt.shared.layout?.aspect ?? 640/500 }
 
+#if !WIDGET_EXTENSION
     static func render(_ content: CalendarHUDContent,
                        width: CGFloat, scale: CGFloat) -> NSImage? {
         renderFrames(content, frames: [content.frame],
                      width: width, scale: scale).first
     }
+#endif
 
+    static func renderCG(_ content: CalendarHUDContent,
+                         width: CGFloat, scale: CGFloat) -> CGImage? {
+        makeFrames(content, frames: [content.frame],
+                   width: width, scale: scale).first?.image
+    }
+
+#if !WIDGET_EXTENSION
     /// Several weather frames of the same sticker at once.
     ///
     /// Only the bottom two layers have anything to do with the weather — the
@@ -61,6 +77,14 @@ enum CalendarHUDRenderer {
     /// the frames one at a time paid that three times over.
     static func renderFrames(_ content: CalendarHUDContent, frames: [Int],
                              width: CGFloat, scale: CGFloat) -> [NSImage] {
+        makeFrames(content, frames: frames, width: width, scale: scale).map {
+            NSImage(cgImage: $0.image, size: $0.pointSize)
+        }
+    }
+#endif
+
+    private static func makeFrames(_ content: CalendarHUDContent, frames: [Int],
+                                   width: CGFloat, scale: CGFloat) -> [RenderedFrame] {
         guard let layout = CalendarArt.shared.layout, !frames.isEmpty else { return [] }
         let k = width*scale/CGFloat(layout.canvas[0])
         let w = Int((CGFloat(layout.canvas[0])*k).rounded())
@@ -80,7 +104,8 @@ enum CalendarHUDRenderer {
         guard !put.isEmpty else { return [] }
 
         var shared: [Int: CalendarRaster.Field] = [:]
-        var out: [NSImage] = []
+        var out: [RenderedFrame] = []
+        let point = CGSize(width: width, height: width/aspect)
         for raw in frames {
             let frame = min(3, max(1, raw))
             put["weather"] = layout.placements.weather[
@@ -115,9 +140,8 @@ enum CalendarHUDRenderer {
                     alpha[i] = c + alpha[i]*(1 - c)
                 }
             }
-            if let img = image(rgb: rgb, alpha: alpha, w: w, h: h,
-                               point: CGSize(width: width, height: width/aspect)) {
-                out.append(img)
+            if let img = image(rgb: rgb, alpha: alpha, w: w, h: h) {
+                out.append(RenderedFrame(image: img, pointSize: point))
             }
         }
         return out
@@ -273,8 +297,7 @@ enum CalendarHUDRenderer {
     /// is not. Skipping the divide puts a grey rim right round the sticker: on
     /// the white outline's antialiased edge the coverage is a half, and a half
     /// stored straight is mid-grey rather than white at half opacity.
-    private static func image(rgb: [Float], alpha: [Float], w: Int, h: Int,
-                              point: CGSize) -> NSImage? {
+    private static func image(rgb: [Float], alpha: [Float], w: Int, h: Int) -> CGImage? {
         var buffer = [UInt8](repeating: 0, count: w*h*4)
         for i in 0..<(w*h) {
             let a = alpha[i]
@@ -286,14 +309,14 @@ enum CalendarHUDRenderer {
             buffer[i*4 + 2] = v
             buffer[i*4 + 3] = UInt8(max(0, min(255, (a*255).rounded())))
         }
-        guard let provider = CGDataProvider(data: Data(buffer) as CFData),
-              let cg = CGImage(
+        guard let provider = CGDataProvider(data: Data(buffer) as CFData) else {
+            return nil
+        }
+        return CGImage(
                 width: w, height: h, bitsPerComponent: 8, bitsPerPixel: 32,
                 bytesPerRow: w*4, space: CGColorSpaceCreateDeviceRGB(),
                 bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue),
                 provider: provider, decode: nil, shouldInterpolate: true,
                 intent: .defaultIntent)
-        else { return nil }
-        return NSImage(cgImage: cg, size: point)
     }
 }
