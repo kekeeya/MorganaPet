@@ -21,6 +21,10 @@ struct DesktopPetView: View {
     @AppStorage(PetPreferences.showsMachineStatusKey) private var showsMachineStatus = true
 
     @State private var isBreathing = false
+    /// Read here rather than passed in: `@AppStorage` republishes on its own, so
+    /// flipping the switch in the settings window reaches him without anything
+    /// having to notice and forward it.
+    @AppStorage(PetPreferences.petBreathesKey) private var breathes = true
     @State private var blinkImageName: String?
     @State private var blinkSequence = 0
     @State private var dialogueMouthImageName: String?
@@ -76,6 +80,7 @@ struct DesktopPetView: View {
                     PetSprite(
                         imageName: spriteImageName,
                         isBreathing: isBreathing,
+                        breathes: breathes,
                         shakeDegrees: shakeDegrees,
                         leanDegrees: touch.strokeLean
                     )
@@ -835,8 +840,17 @@ private struct PersonaNamePlateShape: Shape {
 private struct PetSprite: View {
     var imageName: String
     var isBreathing: Bool
+    /// Whether the swell runs at all. Off, he holds still at his own size —
+    /// which is not the same as holding the bottom of the breath, or he would
+    /// sit three percent smaller than he was drawn.
+    var breathes: Bool
     var shakeDegrees: Double
     var leanDegrees: Double
+
+    /// Both conditions in one value, so the animation restarts when the switch
+    /// is turned back on. `.animation(_:value:)` only fires when the value it is
+    /// watching changes, and `isBreathing` is already true by then.
+    private var swell: Bool { breathes && isBreathing }
 
     var body: some View {
         ZStack {
@@ -851,10 +865,14 @@ private struct PetSprite: View {
             }
 
         }
-        .scaleEffect(isBreathing ? 1.03 : 0.97)
+        .scaleEffect(breathes ? (swell ? 1.03 : 0.97) : 1)
         .rotationEffect(.degrees(shakeDegrees))
         .rotationEffect(.degrees(leanDegrees))
-        .animation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true), value: isBreathing)
+        // Switched off mid-breath he would otherwise snap to full size; the
+        // short ease lets him settle instead.
+        .animation(breathes ? .easeInOut(duration: 1.1).repeatForever(autoreverses: true)
+                            : .easeOut(duration: 0.25),
+                   value: swell)
         // Snappy enough to land each beat of a shake inside its own ~0.11s slot,
         // while still leaving a single poke a little bounce.
         .animation(.spring(response: 0.15, dampingFraction: 0.55), value: shakeDegrees)

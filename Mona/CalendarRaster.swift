@@ -222,6 +222,41 @@ enum CalendarRaster {
         return out
     }
 
+    /// Grows a mask by one pixel in every direction.
+    ///
+    /// Used on a pocket before it is folded back into its layer. Whether a pixel
+    /// is inside a pocket is decided on the mask, which thresholds coverage at a
+    /// half — so the ring where the surrounding artwork fades from solid to
+    /// nothing, coverage between a half and one, counts as boundary and keeps its
+    /// partial value. Everywhere else that ring is the antialiased edge between
+    /// two different colours and is exactly right; inside a pocket that is about
+    /// to be filled it has the same colour on both sides and nothing left to
+    /// antialias against, so it reads as a hairline of whatever lies under the
+    /// layer. Growing the pocket over it removes the seam without moving any edge
+    /// that still separates two colours.
+    static func grow(_ mask: Mask, w: Int, h: Int) -> Mask {
+        let n = w*h
+        var out = Mask(repeating: 0, count: n)
+        mask.withUnsafeBufferPointer { src in
+        out.withUnsafeMutableBufferPointer { dst in
+            for y in 0..<h {
+                let row = y*w
+                for x in 0..<w where src[row + x] != 0 {
+                    for dy in -1...1 {
+                        let yy = y + dy
+                        if yy < 0 || yy >= h { continue }
+                        for dx in -1...1 {
+                            let xx = x + dx
+                            if xx < 0 || xx >= w { continue }
+                            dst[yy*w + xx] = 1
+                        }
+                    }
+                }
+            }
+        }}
+        return out
+    }
+
     /// How many separate pieces a shape is in. Only ever compared before and
     /// after a bridging close, to tell "this joined things up" from "this just
     /// fattened one blob".

@@ -144,7 +144,8 @@ enum CalendarHUDRenderer {
         // — too wide for the square brush below to close, and open at one end so
         // it is not a hole in the layer's own sense.
         if layer.white && !parts.isDisjoint(with: ["under", "card"]) {
-            cov.raise(CalendarRaster.holes(cov.mask(), w: w, h: h))
+            let sheet = CalendarRaster.holes(cov.mask(), w: w, h: h)
+            cov.raise(CalendarRaster.grow(sheet, w: w, h: h))
         }
         // Sealed only where the layer has backings. A lettering layer must not
         // be: the white slots inside a Chinese character are two or three pixels
@@ -234,7 +235,11 @@ enum CalendarHUDRenderer {
                 solid = bridged
             }
         }
-        cov.raise(CalendarRaster.holes(solid, w: w, h: h))
+        // Grown by a pixel: the ring where the plates fade out sits between two
+        // blacks once the pocket is filled, and left partial it shows the white
+        // sheet underneath as a hairline.
+        let pocket = CalendarRaster.holes(solid, w: w, h: h)
+        cov.raise(CalendarRaster.grow(pocket, w: w, h: h))
     }
 
     private static func asset(_ entry: CalendarLayout.Entry, _ part: String,

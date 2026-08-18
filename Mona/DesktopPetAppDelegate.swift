@@ -97,7 +97,7 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
         window.isOpaque = false
         window.backgroundColor = .clear
         window.hasShadow = false
-        window.level = .floating
+        window.level = Self.petLevel(PetPreferences.petAlwaysOnTop)
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.isMovableByWindowBackground = true
         window.acceptsMouseMovedEvents = true
@@ -357,7 +357,16 @@ final class DesktopPetAppDelegate: NSObject, NSApplicationDelegate {
 
     /// Follows the settings window, which only ever writes the preference.
     @objc private func petSettingsChanged() {
+        window?.level = Self.petLevel(PetPreferences.petAlwaysOnTop)
         applyPetVisibility(PetPreferences.petVisible)
+    }
+
+    /// `.normal` rather than something below the desktop: turning the switch off
+    /// means "stop hovering over my work", not "hide behind the wallpaper" —
+    /// clicking another app should put him behind, and clicking the desktop
+    /// should bring him back.
+    private static func petLevel(_ onTop: Bool) -> NSWindow.Level {
+        onTop ? .floating : .normal
     }
 
     /// The one place the pet window is shown or hidden, so the menu item, the

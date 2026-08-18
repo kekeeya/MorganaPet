@@ -166,6 +166,8 @@ private struct GeneralSettingsView: View {
 /// context menu without anything having to notice and forward it.
 private struct PetBehaviourSettingsView: View {
     @AppStorage(PetPreferences.petVisibleKey) private var visible = false
+    @AppStorage(PetPreferences.petAlwaysOnTopKey) private var alwaysOnTop = false
+    @AppStorage(PetPreferences.petBreathesKey) private var breathes = true
     @AppStorage(PetQuietHours.disabledKey) private var neverSpeaksFirst = false
     @AppStorage(PetPreferences.showsCodexUsageKey) private var showsCodexUsage = true
     @AppStorage(PetPreferences.showsClaudeUsageKey) private var showsClaudeUsage = true
@@ -184,6 +186,15 @@ private struct PetBehaviourSettingsView: View {
         Form {
             Section("显示") {
                 Toggle("在桌面显示桌宠", isOn: $visible)
+                Toggle("永远置顶", isOn: $alwaysOnTop)
+                // Stored the right way round and shown the other: the code that
+                // draws him asks whether he breathes, while the switch is about
+                // turning an effect off — and a switch that reads "呼吸特效"
+                // leaves you working out which way is which.
+                Toggle("关闭呼吸特效", isOn: Binding(
+                    get: { !breathes },
+                    set: { breathes = !$0 }
+                ))
             }
 
             Section("对话") {
@@ -241,10 +252,16 @@ private struct PetBehaviourSettingsView: View {
         .onChange(of: showsClaudeUsage) { refresh() }
         // The window it shows lives in the app delegate, so the change is
         // announced rather than applied — same arrangement as the calendar's.
-        .onChange(of: visible) { _, _ in
-            NotificationCenter.default.post(name: PetPreferences.petSettingsChanged,
-                                            object: nil)
-        }
+        .onChange(of: visible) { _, _ in notifyPetChanged() }
+        // The window level lives on the window, which the app delegate owns.
+        // Breathing does not need announcing: the view reads that preference
+        // itself.
+        .onChange(of: alwaysOnTop) { _, _ in notifyPetChanged() }
+    }
+
+    private func notifyPetChanged() {
+        NotificationCenter.default.post(name: PetPreferences.petSettingsChanged,
+                                        object: nil)
     }
 
     private func refresh() {

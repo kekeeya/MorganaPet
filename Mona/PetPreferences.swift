@@ -37,7 +37,34 @@ enum PetPreferences {
         UserDefaults.standard.bool(forKey: petVisibleKey)
     }
 
-    /// Posted when the pet's visibility is changed from the settings window.
+    /// Whether he floats above everything.
+    ///
+    /// Off by default, unlike the calendar. The calendar is a thing you glance
+    /// at, so having it hover is the point; he is a thing you look at when you
+    /// notice him, and a cat permanently on top of the window you are working in
+    /// is a cat you end up hiding. Turned on, he behaves the way the sticker
+    /// does with its own switch on.
+    static let petAlwaysOnTopKey = "MonaPetAlwaysOnTop"
+
+    static var petAlwaysOnTop: Bool {
+        UserDefaults.standard.bool(forKey: petAlwaysOnTopKey)
+    }
+
+    /// Whether he breathes — the slow swell in and out of the sprite.
+    ///
+    /// On by default, because a cat that does not move at all reads as a
+    /// screenshot of a cat. But it is motion in the corner of the eye all day,
+    /// which is exactly the thing some people cannot stop noticing, so it can be
+    /// switched off. Blinking stays either way: it is occasional rather than
+    /// constant, and it is what keeps him from looking switched off.
+    static let petBreathesKey = "MonaPetBreathes"
+
+    static var petBreathes: Bool {
+        UserDefaults.standard.bool(forKey: petBreathesKey)
+    }
+
+    /// Posted when the pet's visibility or window level is changed from the
+    /// settings window.
     static let petSettingsChanged = Notification.Name("MonaPetSettingsChanged")
 
     /// The desktop calendar sticker.
@@ -144,6 +171,8 @@ enum PetPreferences {
             claudeStatusLineKey: "",
             statusRunReversedKey: false,
             petVisibleKey: false,
+            petAlwaysOnTopKey: false,
+            petBreathesKey: true,
             calendarVisibleKey: false,
             calendarWidthKey: 320.0,
             calendarAlwaysOnTopKey: true,
